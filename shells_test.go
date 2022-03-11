@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+// Create a mock shell that imitates a basic bash shell for testing.
+// The mock shell is only for testing purposes.
 var mock = &mockShell{}
 var errParseLine = fmt.Errorf("string 'ERROR' is not allowed")
 
@@ -26,13 +28,18 @@ func (s *mockShell) ParseLine(line string) (string, string, error) {
 		env[1] = strings.TrimSpace(env[1][:idx])
 	}
 
+	// Remove `export` keyword
+	env[0] = strings.TrimSpace(strings.TrimPrefix(env[0], "export"))
 	return env[0], env[1], nil
 }
 
 func TestIgnorable(t *testing.T) {
 	input := map[string]bool{
-		"TEST=Test":  false,
+		// Standard env variable
+		"TEST=Test": false,
+		// Comments should be ignored
 		"#TEST=Test": true,
+		// Standard env variable, comment inline
 		"Test=#Test": false,
 	}
 	for k, v := range input {
@@ -50,8 +57,10 @@ func TestParseLine(t *testing.T) {
 		err  error
 	}
 	input := map[string]*output{
-		"TEST=Test":      {k: "TEST", v: "Test", err: nil},
-		"TEST=#Test":     {k: "TEST", v: "", err: nil},
+		"TEST=Test": {k: "TEST", v: "Test", err: nil},
+		// comment should not be included
+		"TEST=#Test": {k: "TEST", v: "", err: nil},
+		// error
 		"TEST=TestERROR": {k: "", v: "", err: errParseLine},
 	}
 	for line, out := range input {
