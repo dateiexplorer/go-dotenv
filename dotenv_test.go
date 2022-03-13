@@ -4,6 +4,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/dateiexplorer/go-dotenv/shells"
 )
 
 var envMap = [][]string{
@@ -12,8 +14,8 @@ var envMap = [][]string{
 	{"TEST3", "Test3"},
 }
 
-func TestRead(t *testing.T) {
-	envs, err := Read(mock)
+func TestReadWith(t *testing.T) {
+	envs, err := ReadWith(shells.Basic, "testdata/.env")
 	if err != nil {
 		t.Errorf("got %v, want %v", err, nil)
 	}
@@ -32,7 +34,7 @@ func TestRead(t *testing.T) {
 }
 
 func TestLoad(t *testing.T) {
-	Load()
+	LoadWith(shells.Basic, "testdata/.env")
 	envs := make(map[string]string)
 	for _, env := range os.Environ() {
 		v := strings.SplitN(env, "=", 2)

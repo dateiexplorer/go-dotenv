@@ -10,20 +10,35 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/dateiexplorer/go-dotenv/shells"
 )
 
-// Read reads all environment variables form the .env file with the syntax
-// parsing of a specific Shell shell.
-// The function returns a map of parsed environment variables. Names are
-// map keys and the values are the correspoding map values. If any error
-// occured the function returns it. The map contains all env variables
-// that were successfully read until the error occurres.
-func Read(shell Shell) (envs map[string]string, err error) {
+// Read reads all variables form a .env file into the environment. The function
+// uses the Basic shell implementation, a cross platform Shell that implements
+// a subset of the famout Bash shell.
+// It returns a map which contains all successfully read environment variables
+// from the file until an error occurred. The map keys are the variable names,
+// the map values its correspondig values. Returns an error if any occurred.
+func Read() (envs map[string]string, err error) {
+	return ReadWith(shells.Basic, ".env")
+}
+
+// ReadWith reads all variables from a file which path is given in the env
+// parameter into the environment. The function uses the syntax of the Shell
+// shell.
+// It returns a map which contains all successfully read environment variables
+// from the file until an error occurred. The map keys are the variable names,
+// the map values its correspondig values. Returns an error if any occurred.
+//
+// If you want to read from the default .env variable with a basic cross
+// platform Shell, use the simple Read function.
+func ReadWith(shell shells.Shell, env string) (envs map[string]string, err error) {
 	envs = make(map[string]string)
 
 	// Open the file form which the variables should be load.
 	// By default this is the .env variable.
-	f, err := os.Open(".env")
+	f, err := os.Open(env)
 	if err != nil {
 		return envs, fmt.Errorf("cannot open .env file: %w", err)
 	}
@@ -49,17 +64,23 @@ func Read(shell Shell) (envs map[string]string, err error) {
 	return envs, nil
 }
 
-// Load loads all variables defined in the environment file into the current
-// environment with the os specific default shell. For Linux this is the bash
-// shell. Returns an error if any occurres.
+// Load loads all variables defined in the .env file into the environment with
+// a cross platform Basic Shell, which implements a subset of the functionality
+// of the Bash shell.
 //
 // To get the variables use the functions from the os package of the standard
 // library, e.g. os.Gentenv().
 func Load() error {
-	shell := new(BashShell)
+	return LoadWith(shells.Basic, ".env")
+}
 
-	// Read all environment variables from the .env file into a map.
-	envs, err := Read(shell)
+// LoadWith loads all variables defined in the file env into the environment
+// with the specific Shell shell.
+//
+// To get the variables use the functions from the os package of the standard
+// library, e.g. os.Gentenv().
+func LoadWith(shell shells.Shell, env string) error {
+	envs, err := ReadWith(shell, env)
 	if err != nil {
 		return err
 	}
