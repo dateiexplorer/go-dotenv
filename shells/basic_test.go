@@ -1,8 +1,10 @@
-package shells
+package shells_test
 
 import (
 	"os"
 	"testing"
+
+	"github.com/dateiexplorer/go-dotenv/shells"
 )
 
 func TestBasicIgnore(t *testing.T) {
@@ -13,7 +15,7 @@ func TestBasicIgnore(t *testing.T) {
 		"TEST=Test # Comment": false,
 	}
 	for k, v := range input {
-		ignorable := Basic.Ignorable(k)
+		ignorable := shells.Basic.Ignorable(k)
 		if ignorable != v {
 			t.Errorf("line %v: got %v, want %v", k, ignorable, v)
 		}
@@ -71,7 +73,7 @@ type output struct {
 
 func testBasicParseLine(t *testing.T, input map[string]*output) {
 	for line, out := range input {
-		key, value, err := Basic.ParseLine(line)
+		key, value, err := shells.Basic.ParseLine(line)
 		if err != out.err {
 			t.Errorf("line %v (err): got %v, want %v", line, err, out.err)
 		}

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// A bashShell is an implementation of Shell for the famous bash shell which is
+// A bashShell is an implementation of Shell for the famous Bash shell which is
 // in most Linux environments the standard shell.
 type bashShell struct{}
 
@@ -16,12 +16,13 @@ func (s *bashShell) Ignorable(line string) bool {
 	return strings.HasPrefix(line, "#")
 }
 
-// ParseLine parses a single environment variable using an echo command in the
-// bash shell. This assumes that bash executable is available under /bin/bash.
+// ParseLine parses a single environment variable using an 'echo' command from
+// the Bash shell. This assumes that Bash executable is available on the system
+// under '/bin/bash'.
 //
-// The advantage of using the bash shell instead of implementing its whole
-// syntax is that all variable and bash command substitutions working properly.
-// Bash syntax is very complex. If a other implementation is needed you can
+// The advantage of using the Bash shell instead of implementing its whole
+// syntax is that all variable and Bash command substitutions working properly.
+// Bash syntax is very complex. If another implementation is needed you can
 // create it on your own by creating a new type implements the Shell interface.
 //
 // It returns the name and value of the the environment variable or empty
@@ -29,7 +30,7 @@ func (s *bashShell) Ignorable(line string) bool {
 // set. Otherwise the error is nil.
 //
 // This implementation supports the 'export' keyword for variables, so that a
-// .env file can also be sourced in a bash environment if needed.
+// env file can also be sourced in a Bash environment if needed.
 func (s *bashShell) ParseLine(line string) (string, string, error) {
 	// Echo the line in the bash shell. Use the output to create key value
 	// pair.
