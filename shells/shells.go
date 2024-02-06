@@ -1,44 +1,52 @@
-// Package shells provides various implementations for shells to parse
+// Package shells provides various implementations of shell syntax to parse
 // variables from a file into the environment.
 // Further with the Shell interface this package gives the ability to implement
 // individual interpreter on your own.
 //
 // A Shell in the context of the dotenv package is an execution environment
 // that has the ability to parse variables as environment variables. A Shell
-// in this context is nothing more than a set of specific syntax.
+// in this context is nothing more than a set of specific syntax to interpret
+// environment variables.
+//
 package shells
 
 var (
 	// Bash is an implementation of the famous Bash shell that is the default
 	// shell in most Linux distributions.
 	//
-	// To parse variable in the environment this implementation uses the echo
-	// command of a real bash shell. This assumes that a bash executable is
-	// available under /bin/bash. So this implementation is only capable for
+	// To parse environment variables this implementation uses the "echo"
+	// command of the real Bash. This assumes that a Bash executable is
+	// available under "/bin/bash". So this implementation is only capable for
 	// Linux environments.
 	//
 	// If you need a cross platform implementation use the Basic shell instead.
-	// It provides a subset of the bash shell syntax and may reach out for the
+	// It provides a subset of the Bash syntax and may be sufficient for the
 	// most purposes.
 	//
-	// If you need fully support of all bash syntax you can use this Bash
-	// implementation. The advantage using the bash shell instead of
-	// implementing its whole syntax is that it ensures that all variable and
-	// bash command substitutions working properly because the bash syntax can
-	// be very complex.
+	// If you need fully support of all Bash syntax you can use this Bash
+	// implementation. The advantage using a real Bash instead of implementing
+	// its whole syntax is that it ensures that all variable and Bash command
+	// substitutions working properly because the bash syntax can be very
+	// complex.
+	//
+	// This implementation supports command substitutions, e.g.
+	//
+	//  SOME_ENV_VAR=/some/path/$(whoami)
+	//
 	Bash = &bashShell{}
 
 	// Basic is a cross platform shell which not depends on any operating
-	// system specific stuff.
-	// It provides a subset of the functionality and syntax of the famous
-	// bash shell and so is fully compatible.
+	// system specific stuff or the availablity of executables.
+	// It provides a subset of the functionality and syntax of the famous Bash
+	// and so it is fully compatible.
 	//
-	// Is most cases this is what you want and is should reach out for most
+	// Is most cases this is what you want and it should be sufficient for most
 	// purposes.
-	// But this implementation lacks some features such as bash command
+	// But this implementation lacks some features such as Bash command
 	// substitutions.
 	// If you would take care of those, probably you'll take a look at the Bash
-	// implementation or create your own Shell that fit your needs.
+	// implementation or create your own Shell implementation that fit your
+	// needs.
 	Basic = &basicShell{}
 )
 

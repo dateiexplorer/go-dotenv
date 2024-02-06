@@ -1,10 +1,11 @@
-package dotenv
+package dotenv_test
 
 import (
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/dateiexplorer/go-dotenv"
 	"github.com/dateiexplorer/go-dotenv/shells"
 )
 
@@ -15,7 +16,7 @@ var envMap = [][]string{
 }
 
 func TestReadWith(t *testing.T) {
-	envs, err := ReadWith(shells.Basic, "testdata/.env")
+	envs, err := dotenv.ReadWith(shells.Basic, "testdata/.env")
 	if err != nil {
 		t.Errorf("got %v, want %v", err, nil)
 	}
@@ -34,7 +35,7 @@ func TestReadWith(t *testing.T) {
 }
 
 func TestLoad(t *testing.T) {
-	LoadWith(shells.Basic, "testdata/.env")
+	dotenv.LoadWith(shells.Basic, "testdata/.env")
 	envs := make(map[string]string)
 	for _, env := range os.Environ() {
 		v := strings.SplitN(env, "=", 2)

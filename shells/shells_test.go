@@ -1,4 +1,4 @@
-package shells
+package shells_test
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-// Create a mock shell that imitates a basic bash shell for testing.
-// The mock shell is only for testing purposes.
+// Create a mock shell that imitates a basic Bash for testing.
+// The mock shell is only for testing purposes. Never use it in production.
 var mock = &mockShell{}
 var errParseLine = fmt.Errorf("string 'ERROR' is not allowed")
 
