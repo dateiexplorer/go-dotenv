@@ -1,19 +1,23 @@
+// Package dotenv provides functions to use variables form an .env file int the
+// current environment.
+//
+// Use the standard library functions to use the loaded env vars, e.g.
+// os.Gentenv().
 package dotenv
 
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 )
 
-func init() {
-	if err := Load(); err != nil {
-		log.Fatalln(err)
-	}
-}
-
+// Read reads all environment variables form the .env file with the syntax
+// parsing of a specific Shell shell.
+// The function returns a map of parsed environment variables. Names are
+// map keys and the values are the correspoding map values. If any error
+// occured the function returns it. The map contains all env variables
+// that were successfully read until the error occurres.
 func Read(shell Shell) (envs map[string]string, err error) {
 	envs = make(map[string]string)
 
@@ -26,9 +30,11 @@ func Read(shell Shell) (envs map[string]string, err error) {
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
-	for i := 0; scanner.Scan(); i++ {
+	for scanner.Scan() {
+		// Trim whitespace.
 		line := strings.TrimSpace(scanner.Text())
-		if shell.Ignorable(line) {
+		// Skip empty and other ignorable files.
+		if len(line) == 0 || shell.Ignorable(line) {
 			continue
 		}
 
@@ -43,8 +49,16 @@ func Read(shell Shell) (envs map[string]string, err error) {
 	return envs, nil
 }
 
+// Load loads all variables defined in the environment file into the current
+// environment with the os specific default shell. For Linux this is the bash
+// shell. Returns an error if any occurres.
+//
+// To get the variables use the functions from the os package of the standard
+// library, e.g. os.Gentenv().
 func Load() error {
 	shell := new(BashShell)
+
+	// Read all environment variables from the .env file into a map.
 	envs, err := Read(shell)
 	if err != nil {
 		return err
